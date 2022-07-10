@@ -15,6 +15,11 @@
 # views them; you can change their type later on. Read the variables type
 # constraints documentation
 # https://www.packer.io/docs/templates/hcl_templates/variables#type-constraints for more info.
+
+# source blocks are generated from your builders; a source can be referenced in
+# build blocks. A build block runs provisioner and post-processors on a
+# source. Read the documentation for source blocks here:
+# https://www.packer.io/docs/templates/hcl_templates/blocks/source
 variable "disk_size" {
   type    = string
   default = "25G"
@@ -30,43 +35,72 @@ variable "user" {
   default = "vagrant"
 }
 
-# source blocks are generated from your builders; a source can be referenced in
-# build blocks. A build block runs provisioner and post-processors on a
-# source. Read the documentation for source blocks here:
-# https://www.packer.io/docs/templates/hcl_templates/blocks/source
-source "qemu" "centos-85-x86_64-uefi-vagrant" {
+variable "firmware" {
+  type    = string
+  default = "/usr/share/edk2/ovmf/OVMF_CODE.fd"
+}
+
+variable "headless" {
+  type = bool
+  default = true
+}
+
+source "qemu" "centos-84-uefi" {
   accelerator      = "kvm"
-  boot_command     = ["e<down><down><end><bs><bs><bs><bs><bs>inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<leftCtrlOn>x<leftCtrlOff>"]
+  boot_command     = ["<wait><wait>e<down><down><end><bs><bs><bs><bs><bs>inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos84-ks.cfg<leftCtrlOn>x<leftCtrlOff>"]
   boot_wait        = "5s"
   disk_compression = true
   disk_size        = "${var.disk_size}"
   format           = "qcow2"
   http_directory   = "http"
-  iso_checksum     = "sha256:9602c69c52d93f51295c0199af395ca0edbe35e36506e32b8e749ce6c8f5b60a"
-  iso_url          = "https://vault.centos.org/8.5.2111/isos/x86_64/CentOS-8.5.2111-x86_64-boot.iso"
+  iso_checksum     = "sha256:c79921e24d472144d8f36a0d5f409b12bd016d9d7d022fd703563973ca9c375c"
+  iso_url          = "https://vault.centos.org/8.4.2105/isos/x86_64/CentOS-8.4.2105-x86_64-boot.iso"
   machine_type     = "q35"
-  firmware         = "/usr/share/edk2/ovmf/OVMF_CODE.fd"
+  firmware         = "${var.firmware}"
   use_pflash       = false
-  qemuargs         = [
+  qemuargs = [
     ["-cpu", "host"],
     ["-m", "1024"],
   ]
   shutdown_command = "echo '${var.password}'|sudo -S shutdown -P now"
   ssh_password     = "${var.password}"
-  ssh_timeout      = "10m"
   ssh_username     = "${var.user}"
+  ssh_timeout      = "10m"
+  headless         = var.headless
+}
+
+source "qemu" "centos-85-uefi" {
+  accelerator      = "kvm"
+  boot_command     = ["<wait><wait>e<down><down><end><bs><bs><bs><bs><bs>inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos85-ks.cfg<leftCtrlOn>x<leftCtrlOff>"]
+  boot_wait        = "5s"
+  disk_compression = true
+  disk_size        = "${var.disk_size}"
+  format           = "qcow2"
+  http_directory   = "http"
+  iso_checksum     = "sha256:9602c69c52d93f51295c0199af395ca0edbe35e36506e32b8e749ce6c8f5b6"
+  iso_url          = "https://vault.centos.org/8.5.2111/isos/x86_64/CentOS-8.5.2111-x86_64-boot.iso"
+  machine_type     = "q35"
+  firmware         = "${var.firmware}"
+  use_pflash       = false
+  qemuargs = [
+    ["-cpu", "host"],
+    ["-m", "1024"],
+  ]
+  shutdown_command = "echo '${var.password}'|sudo -S shutdown -P now"
+  ssh_password     = "${var.password}"
+  ssh_username     = "${var.user}"
+  ssh_timeout      = "10m"
+  headless         = var.headless
 }
 
 # a build block invokes sources and runs provisioning steps on them. The
 # documentation for build blocks can be found here:
 # https://www.packer.io/docs/templates/hcl_templates/blocks/build
 build {
-  sources = ["source.qemu.centos-85-x86_64-uefi-vagrant"]
-  
+  sources = ["source.qemu.centos-84-uefi", "source.qemu.centos-85-uefi"]
+
   post-processor "vagrant" {
-    // include              = ["vm/centos-8.5-uefi.qcow2"]
     provider_override    = "libvirt"
-    vagrantfile_template = "/home/r0x0d/Workspace/research/packer/Vagrantfile"
-    keep_input_artifact  = true
+    vagrantfile_template = "./Vagrantfile-uefi.template"
   }
 }
