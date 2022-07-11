@@ -98,7 +98,7 @@ source "qemu" "centos-85-uefi" {
   disk_size        = "${var.disk_size}"
   format           = "qcow2"
   http_directory   = "http"
-  iso_checksum     = "sha256:9602c69c52d93f51295c0199af395ca0edbe35e36506e32b8e749ce6c8f5b6"
+  iso_checksum     = "sha256:9602c69c52d93f51295c0199af395ca0edbe35e36506e32b8e749ce6c8f5b60a"
   iso_url          = "https://vault.centos.org/8.5.2111/isos/x86_64/CentOS-8.5.2111-x86_64-boot.iso"
   machine_type     = "q35"
   firmware         = "${var.firmware}"
@@ -126,11 +126,11 @@ build {
       vagrantfile_template = "./Vagrantfile-uefi.template"
     }
 
-    #post-processor "vagrant-cloud" {
-    #  access_token        = "${var.cloud_token}"
-    #  box_tag             = "${var.box_tag}"
-    #  version             = "${var.version}"
-    #  version_description = "${var.version_description}"
-    #}
+    post-processor "vagrant-cloud" {
+      access_token        = "${var.cloud_token}"
+      box_tag             = "${var.box_tag}"
+      version             = "${var.version}"
+      version_description = "${var.version_description}"
+    }
   }
 }
