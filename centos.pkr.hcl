@@ -66,6 +66,30 @@ variable "version_description" {
   default = ""
 }
 
+source "qemu" "centos-79-uefi" {
+  accelerator      = "kvm"
+  boot_command     = ["<wait><wait>e<down><down><end><bs><bs><bs><bs><bs>inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos79-ks.cfg<leftCtrlOn>x<leftCtrlOff>"]
+  boot_wait        = "5s"
+  disk_compression = true
+  disk_size        = "${var.disk_size}"
+  format           = "qcow2"
+  http_directory   = "http"
+  iso_checksum     = "sha256:b79079ad71cc3c5ceb3561fff348a1b67ee37f71f4cddfec09480d4589c191d6"
+  iso_url          = "http://packages.oit.ncsu.edu/centos/7.9.2009/isos/x86_64/CentOS-7-x86_64-NetInstall-2009.iso"
+  machine_type     = "q35"
+  firmware         = "${var.firmware}"
+  use_pflash       = false
+  qemuargs = [
+    ["-cpu", "host"],
+    ["-m", "1024"],
+  ]
+  shutdown_command = "echo '${var.password}'|sudo -S shutdown -P now"
+  ssh_password     = "${var.password}"
+  ssh_username     = "${var.user}"
+  ssh_timeout      = "10m"
+  headless         = var.headless
+}
+
 source "qemu" "centos-84-uefi" {
   accelerator      = "kvm"
   boot_command     = ["<wait><wait>e<down><down><end><bs><bs><bs><bs><bs>inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos84-ks.cfg<leftCtrlOn>x<leftCtrlOff>"]
@@ -118,7 +142,7 @@ source "qemu" "centos-85-uefi" {
 # documentation for build blocks can be found here:
 # https://www.packer.io/docs/templates/hcl_templates/blocks/build
 build {
-  sources = ["source.qemu.centos-84-uefi", "source.qemu.centos-85-uefi"]
+  sources = ["source.qemu.centos-79-uefi", "source.qemu.centos-84-uefi", "source.qemu.centos-85-uefi"]
 
   post-processors {
     post-processor "vagrant" {
