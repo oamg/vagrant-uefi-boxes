@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 SYSTEM=$1
-EXTRA_PKR_VARS=
+EXTRA_PKR_VARS=$2
 PACKER_LOG=0
 
 function cleanup() {
@@ -74,7 +74,7 @@ function setup_build_centos85() {
 
 function build() {
     echo "Building $PKR_HCL_FILE"
-    packer build "$PKR_VARS[@]" "$PKR_ONLY" "$PKR_HCL_FILE"
+    packer build "${PKR_VARS[@]}" "$PKR_ONLY" "$PKR_HCL_FILE"
 }
 
 case $SYSTEM in
