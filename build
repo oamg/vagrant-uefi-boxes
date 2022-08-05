@@ -10,63 +10,83 @@ function cleanup() {
 
 # Oracle Linux Setup
 
-function setup_build_ol79() {
-    export PKR_HCL_FILE=ol.pkr.hcl 
+function setup_build_ol610() {
+    export PKR_HCL_FILE=ol.pkr.hcl
     export PKR_VARS=(
-        -var="box_tag=rhel-conversions/ol-7.9-uefi" 
-        -var="version=7.9" 
+        -var="box_tag=rhel-conversions/oracle-linux-6.10-uefi"
+        -var="version=6.10"
         $EXTRA_PKR_VARS
     )
-    export PKR_ONLY=-only="qemu.ol-79-uefi"
+    export PKR_ONLY=-only="qemu.oraclelinux-610-uefi"
+}
+
+function setup_build_ol79() {
+    export PKR_HCL_FILE=ol.pkr.hcl
+    export PKR_VARS=(
+        -var="box_tag=rhel-conversions/oracle-linux-7.9-uefi"
+        -var="version=7.9"
+        $EXTRA_PKR_VARS
+    )
+    export PKR_ONLY=-only="qemu.oraclelinux-79-uefi"
 }
 
 function setup_build_ol84() {
-    export PKR_HCL_FILE=ol.pkr.hcl 
+    export PKR_HCL_FILE=ol.pkr.hcl
     export PKR_VARS=(
-        -var="box_tag=rhel-conversions/ol-8.4-uefi" 
-        -var="version=8.4" 
+        -var="box_tag=rhel-conversions/oracle-linux-8.4-uefi"
+        -var="version=8.4"
         $EXTRA_PKR_VARS
     )
-    export PKR_ONLY=-only="qemu.ol-84-uefi"
+    export PKR_ONLY=-only="qemu.oraclelinux-84-uefi"
 }
 
 function setup_build_ol86() {
-    export PKR_HCL_FILE=ol.pkr.hcl 
+    export PKR_HCL_FILE=ol.pkr.hcl
     export PKR_VARS=(
-        -var="box_tag=rhel-conversions/ol-8.6-uefi" 
-        -var="version=8.6" 
+        -var="box_tag=rhel-conversions/oracle-linux-8.6-uefi"
+        -var="version=8.6"
         $EXTRA_PKR_VARS
     )
-    export PKR_ONLY=-only="qemu.ol-86-uefi"
+    export PKR_ONLY=-only="qemu.oraclelinux-86-uefi"
+}
+
+function setup_build_ol90() {
+    export PKR_HCL_FILE=ol.pkr.hcl
+    export PKR_VARS=(
+        -var="box_tag=rhel-conversions/oracle-linux-9.0-uefi"
+        -var="version=9.0"
+        $EXTRA_PKR_VARS
+    )
+    export PKR_ONLY=-only="qemu.oraclelinux-90-uefi"
 }
 
 # CentOS Linux Setup
 
 function setup_build_centos79() {
-    export PKR_HCL_FILE=centos.pkr.hcl 
+    export PKR_HCL_FILE=centos.pkr.hcl
     export PKR_VARS=(
-        -var="box_tag=rhel-conversions/centos-7.9-uefi" 
-        -var="version=7.9.2009" 
+        -var="box_tag=rhel-conversions/centos-7.9-uefi"
+        -var="version=7.9.2009"
         $EXTRA_PKR_VARS
     )
     export PKR_ONLY=-only="qemu.centos-79-uefi"
 }
 
 function setup_build_centos84() {
-    export PKR_HCL_FILE=centos.pkr.hcl 
+    export PKR_HCL_FILE=centos.pkr.hcl
     export PKR_VARS=(
-        -var="box_tag=rhel-conversions/centos-8.4-uefi" 
-        -var="version=8.4.2105" 
+        -var="box_tag=rhel-conversions/centos-8.4-uefi"
+        -var="version=8.4.2105"
         $EXTRA_PKR_VARS
     )
     export PKR_ONLY=-only="qemu.centos-84-uefi"
 }
 
 function setup_build_centos85() {
-    export PKR_HCL_FILE=centos.pkr.hcl 
+    export PKR_HCL_FILE=centos.pkr.hcl
     export PKR_VARS=(
-        -var="box_tag=rhel-conversions/centos-8.5-uefi" 
-        -var="version=8.5.2111" 
+        -var="box_tag=rhel-conversions/centos-8.5-uefi"
+        -var="version=8.5.2111"
         $EXTRA_PKR_VARS
     )
     export PKR_ONLY=-only="qemu.centos-85-uefi"
@@ -74,10 +94,15 @@ function setup_build_centos85() {
 
 function build() {
     echo "Building $PKR_HCL_FILE"
-    packer build "${PKR_VARS[@]}" "$PKR_ONLY" "$PKR_HCL_FILE"
+    PACKER_LOG=1 packer build "${PKR_VARS[@]}" "$PKR_ONLY" "$PKR_HCL_FILE"
 }
 
 case $SYSTEM in
+    centos)
+        setup_build_centos79
+        setup_build_centos84
+        setup_build_centos85
+        ;;
     centos79)
         setup_build_centos79
         ;;
@@ -87,14 +112,27 @@ case $SYSTEM in
     centos85)
         setup_build_centos85
         ;;
+    oracle_linux)
+        setup_build_ol610
+        setup_build_ol79
+        setup_build_ol84
+        setup_build_ol86
+        setup_build_ol90
+        ;;
+    ol610)
+        setup_build_ol610
+        ;;
     ol79)
         setup_build_ol79
         ;;
     ol84)
         setup_build_ol84
         ;;
-    ol87)
+    ol86)
         setup_build_ol86
+        ;;
+    ol90)
+        setup_build_ol90
         ;;
     *)
         echo "Not an viable option."
