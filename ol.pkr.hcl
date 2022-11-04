@@ -98,7 +98,7 @@ source "qemu" "oraclelinux-79-uefi" {
   disk_size        = "${var.disk_size}"
   format           = "qcow2"
   http_directory   = "http"
-  iso_checksum     = "sha256:6da0323423f3a52d20d1021c2651885052319ca4ace7532859d8d20640829004"
+  iso_checksum     = "sha256:4b87b6009500f2eb81e52548c6c31f43dc60797193da7c4c47ff9381e14fff6e"
   iso_url          = "https://yum.oracle.com/ISOS/OracleLinux/OL7/u9/x86_64/x86_64-boot.iso"
   machine_type     = "q35"
   firmware         = "${var.firmware}"
@@ -212,13 +212,14 @@ build {
     post-processor "vagrant" {
       provider_override    = "libvirt"
       vagrantfile_template = "./Vagrantfile-uefi.template"
+      keep_input_artifact = true
     }
 
-    post-processor "vagrant-cloud" {
-      access_token        = "${var.cloud_token}"
-      box_tag             = "${var.box_tag}"
-      version             = "${var.version}"
-      version_description = "${var.version_description}"
-    }
+    # post-processor "vagrant-cloud" {
+    #   access_token        = "${var.cloud_token}"
+    #   box_tag             = "${var.box_tag}"
+    #   version             = "${var.version}"
+    #   version_description = "${var.version_description}"
+    # }
   }
 }

@@ -101,6 +101,8 @@ source "qemu" "centos-84-uefi" {
   iso_checksum     = "sha256:c79921e24d472144d8f36a0d5f409b12bd016d9d7d022fd703563973ca9c375c"
   iso_url          = "https://vault.centos.org/8.4.2105/isos/x86_64/CentOS-8.4.2105-x86_64-boot.iso"
   machine_type     = "q35"
+  output_directory = "centos84-base-img"
+  vm_name          = "centos7-base"
   firmware         = "${var.firmware}"
   use_pflash       = false
   qemuargs = [
@@ -148,13 +150,14 @@ build {
     post-processor "vagrant" {
       provider_override    = "libvirt"
       vagrantfile_template = "./Vagrantfile-uefi.template"
+      keep_input_artifact = true
     }
 
-    post-processor "vagrant-cloud" {
-      access_token        = "${var.cloud_token}"
-      box_tag             = "${var.box_tag}"
-      version             = "${var.version}"
-      version_description = "${var.version_description}"
-    }
+    # post-processor "vagrant-cloud" {
+    #   access_token        = "${var.cloud_token}"
+    #   box_tag             = "${var.box_tag}"
+    #   version             = "${var.version}"
+    #   version_description = "${var.version_description}"
+    # }
   }
 }
