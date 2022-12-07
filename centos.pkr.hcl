@@ -53,7 +53,7 @@ variable "cloud_token" {
 
 variable "box_tag" {
   type    = string
-  default = "oamg/centos-uefi"
+  default = "rhel-conversions/centos-uefi"
 }
 
 variable "version" {
