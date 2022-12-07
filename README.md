@@ -7,12 +7,11 @@ Supported systems so far:
 
 | CentOS Linux  | Oracle Linux | Rocky Linux | Alma Linux |
 |---------------|--------------|-------------|------------|
-| 6             | 6            | 6           | 6          |
-| 7 ✅          | 7 ✅         | 7           | 7          |
-| 8 ✅          | 8 ✅         | 8           | 8          |
-| 8 Stream      | 9 ✅         | N/A         | N/A        |
+| 6             | 6            | N/A         | N/A        |
+| 7 ✅          | 7 ✅         | N/A         | N/A        |
+| 8 ✅          | 8.6 - 8.7 ✅ | 8           | 8          |
+| 8 Stream      | 9 ✅         | 9           | 9          |
 | 9 Stream      | N/A          | N/A         | N/A        |
-
 
 ## Preparation
 

@@ -53,12 +53,12 @@ variable "cloud_token" {
 
 variable "box_tag" {
   type    = string
-  default = "oamg/oraclelinux-uefi"
+  default = "rhel-conversions/oraclelinux-uefi"
 }
 
 variable "version" {
   type    = string
-  default = "8.6"
+  default = "8.7"
 }
 
 variable "version_description" {
@@ -162,6 +162,30 @@ source "qemu" "oraclelinux-86-uefi" {
   headless         = var.headless
 }
 
+source "qemu" "oraclelinux-87-uefi" {
+  accelerator      = "kvm"
+  boot_command     = ["<wait><wait>e<down><down><end><bs><bs><bs><bs><bs>inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ol87-ks.cfg<leftCtrlOn>x<leftCtrlOff>"]
+  boot_wait        = "5s"
+  disk_compression = true
+  disk_size        = "${var.disk_size}"
+  format           = "qcow2"
+  http_directory   = "http"
+  iso_checksum     = "sha256:d88b649f384a08cbb13e87e3ab0fb4088a1c8c601e3678abbb916c700229f80e"
+  iso_url          = "https://yum.oracle.com/ISOS/OracleLinux/OL8/u7/x86_64/x86_64-boot-uek.iso"
+  machine_type     = "q35"
+  firmware         = "${var.firmware}"
+  use_pflash       = false
+  qemuargs = [
+    ["-cpu", "host"],
+    ["-m", "1024"],
+  ]
+  shutdown_command = "echo '${var.password}'|sudo -S shutdown -P now"
+  ssh_password     = "${var.password}"
+  ssh_username     = "${var.user}"
+  ssh_timeout      = "30m"
+  headless         = var.headless
+}
+
 source "qemu" "oraclelinux-90-uefi" {
   accelerator      = "kvm"
   boot_command     = ["<wait><wait>e<down><down><end><bs><bs><bs><bs><bs>inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ol90-ks.cfg<leftCtrlOn>x<leftCtrlOff>"]
@@ -195,12 +219,13 @@ build {
     "source.qemu.oraclelinux-79-uefi",
     "source.qemu.oraclelinux-84-uefi",
     "source.qemu.oraclelinux-86-uefi",
+    "source.qemu.oraclelinux-87-uefi",
     "source.qemu.oraclelinux-90-uefi"
   ]
 
   # This will be run for every source, if a specific script needs to be ran for
-  # a specific source, please, create a new provisioner with the `only`
-  # property and specify that source.
+  # a specific source, please, create a new provisioner with the `only` property
+  # and specify that source.
   provisioner "shell" {
     execute_command = "sudo -S sh -c '{{ .Vars }} {{ .Path }}'"
     scripts = [

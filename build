@@ -50,6 +50,16 @@ function setup_build_ol86() {
     export PKR_ONLY=-only="qemu.oraclelinux-86-uefi"
 }
 
+function setup_build_ol87() {
+    export PKR_HCL_FILE=ol.pkr.hcl
+    export PKR_VARS=(
+        -var="box_tag=rhel-conversions/oracle-linux-8.7-uefi"
+        -var="version=8.7"
+        $EXTRA_PKR_VARS
+    )
+    export PKR_ONLY=-only="qemu.oraclelinux-87-uefi"
+}
+
 function setup_build_ol90() {
     export PKR_HCL_FILE=ol.pkr.hcl
     export PKR_VARS=(
@@ -117,6 +127,7 @@ case $SYSTEM in
         setup_build_ol79
         setup_build_ol84
         setup_build_ol86
+        setup_build_ol87
         setup_build_ol90
         ;;
     ol610)
@@ -130,6 +141,9 @@ case $SYSTEM in
         ;;
     ol86)
         setup_build_ol86
+        ;;
+    ol87)
+        setup_build_ol87
         ;;
     ol90)
         setup_build_ol90
