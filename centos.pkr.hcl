@@ -75,7 +75,7 @@ source "qemu" "centos-79-uefi" {
   format           = "qcow2"
   http_directory   = "http"
   iso_checksum     = "sha256:b79079ad71cc3c5ceb3561fff348a1b67ee37f71f4cddfec09480d4589c191d6"
-  iso_url          = "http://packages.oit.ncsu.edu/centos/7.9.2009/isos/x86_64/CentOS-7-x86_64-NetInstall-2009.iso"
+  iso_url          = "https://vault.centos.org/7.9.2009/isos/x86_64/CentOS-7-x86_64-NetInstall-2009.iso"
   machine_type     = "q35"
   firmware         = "${var.firmware}"
   use_pflash       = false

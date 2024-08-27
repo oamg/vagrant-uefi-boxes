@@ -19,6 +19,8 @@ For using this setup, you will need to do a couple of things first to ensure
 that everything will run smoothly.
 
 First, you need to install [packer](https://learn.hashicorp.com/tutorials/packer/get-started-install-cli), as it is the main application needed to generate the builds.
+Also install packer [QEMU plugin](https://developer.hashicorp.com/packer/integrations/hashicorp/qemu) and 
+[Vagrant plugin](https://developer.hashicorp.com/packer/integrations/hashicorp/vagrant) needed for building vagrant boxes.
 
 If you don't have `libvirt` installed, you can follow this guide on [fedora project](https://developer.fedoraproject.org/tools/virtualization/installing-libvirt-and-virt-install-on-fedora-linux.html) to install it.
 
@@ -52,3 +54,27 @@ can do so by setting an environment variable before running the script, like:
 This will append the `-var="headless=false"` to the list of packer variables
 that will be passed to the build. Any variable defined in both `centos.pkr.hcl`
 and `ol.pkr.hcl` can be overrided like that.
+
+
+## Testing the box
+The `./build <system_version>` should build `.box` file in the root of this repo. 
+If you decide to test it locally, you need to add the box to the vagrant library,
+prepare Vagrant file with UEFI support and run the box.
+
+1. Add to vagrant library
+In the root folder, run:
+```
+vagrant box add ./<name_of_the_box>.box --name=<your_selected_name>
+```
+2. Prepare Vagrant file
+In some another folder (e.g. `/tmp/vagrant-test`) run `Vagrant init`
+and change content of the generated `Vagrantfile` to (or create the
+file direcly) to contain:
+```
+Vagrant.configure("2") do |config|
+  config.vm.box = "<your_selected_name>"
+  config.vm.provider :libvirt do |libvirt|
+    libvirt.loader = "/usr/share/edk2/ovmf/OVMF_CODE.fd"
+  end
+end
+```
