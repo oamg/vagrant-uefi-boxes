@@ -40,8 +40,8 @@ Once you have that set, you can run the following command in your terminal:
 ```
 
 This will generate a new centos8 vagrant boxes with UEFI enabled. Keep in mind
-that the way our packer is setup right now, it will try to push this boxes to
-the Vagrant Cloud registry, if you don't want that to happen, you can just
+that the way our packer is setup right now, it *will try to push this boxes to
+the Vagrant Cloud registry*, if you don't want that to happen, you can just
 comment out the `vagrant-cloud` post-processor.
 
 If you want to override any variables that are used in the build process, you
@@ -55,6 +55,19 @@ This will append the `-var="headless=false"` to the list of packer variables
 that will be passed to the build. Any variable defined in both `centos.pkr.hcl`
 and `ol.pkr.hcl` can be overrided like that.
 
+## Release to Vagrant Cloud registry
+As the repository is set now, it will in the default state try to push to the registry.
+For doing that successfully, you need to set cloud token. Yon can do that by providing
+it as variable to the script:
+ ```bash
+./build ol9 -var="cloud_token=<your-token>"
+```
+or directly in the `.hcl` file of the platform you want by adding it to the variable 
+`cloud_token` as default variable.
+
+In the `build` script do not forget to update the version related to the all boxes
+you want to release, e.g. for `centos79`: `-var="version=7.9.2009` change to
+`-var="version=7.9.2009.1"`
 
 ## Testing the box
 The `./build <system_version>` should build `.box` file in the root of this repo. 
