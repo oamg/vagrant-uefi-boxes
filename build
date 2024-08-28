@@ -76,7 +76,7 @@ function setup_build_centos79() {
     export PKR_HCL_FILE=centos.pkr.hcl
     export PKR_VARS=(
         -var="box_tag=rhel-conversions/centos-7.9-uefi"
-        -var="version=7.9.2009"
+        -var="version=7.9.2009.1"
         $EXTRA_PKR_VARS
     )
     export PKR_ONLY=-only="qemu.centos-79-uefi"
